@@ -19,13 +19,18 @@ const getURLsFromHTML = (htmlBody, baseURL) => {
       // relative
       try {
         const urlObj = new URL(`${baseURL}${link.href}`);
+        urls.push(`${baseURL}${link.href}`);
       } catch (error) {
         console.log("error with relative url");
       }
-      urls.push(`${baseURL}${link.href}`);
     } else {
       // absolutes
-      urls.push(link.href);
+      try {
+        const urlObj = new URL(link.href);
+        urls.push(link.href);
+      } catch (error) {
+        console.log("error with absolute url");
+      }
     }
   });
   return urls;

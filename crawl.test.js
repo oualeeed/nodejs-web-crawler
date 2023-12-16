@@ -71,3 +71,18 @@ test("getURLsFromHTML both", () => {
   ];
   expect(actual).toEqual(expected);
 });
+
+test("getURLsFromHTML invalid", () => {
+  const inputHTMLBody = `
+    <html>
+      <body>
+        <a href="invalid"> INVALID</a>
+      </body>
+    </html>
+  `;
+
+  const inputBaseURL = "https://geeksandblogs.fly.io";
+  const actual = getURLsFromHTML(inputHTMLBody, inputBaseURL);
+  const expected = [];
+  expect(actual).toEqual(expected);
+});
