@@ -1,6 +1,34 @@
 const { url } = require("inspector");
 const { JSDOM } = require("jsdom");
 
+const crawlPage = async (pageURL) => {
+  console.log(`Activliy crawling ${pageURL}`);
+
+  try {
+    const resp = await fetch(pageURL);
+    if (resp.status >= 400) {
+      console.log(
+        `error fetching page on url ${pageURL} with code status ${resp.status}`
+      );
+      return;
+    }
+
+    const contentType = resp.headers.get("content-type");
+
+    if (!contentType.includes("text/html")) {
+      console.log(
+        `non html response, content-type ${contentType} on page ${pageURL}`
+      );
+      return;
+    }
+    console.log(await resp.text());
+  } catch (error) {
+    console.log(
+      `error fetching page on url ${pageURL}, with message: ${error.message}`
+    );
+  }
+};
+
 const normalizeURL = (urlString) => {
   const urlObj = new URL(urlString);
   const hostPath = `${urlObj.hostname}${urlObj.pathname}`;
@@ -39,4 +67,5 @@ const getURLsFromHTML = (htmlBody, baseURL) => {
 module.exports = {
   normalizeURL,
   getURLsFromHTML,
+  crawlPage,
 };
