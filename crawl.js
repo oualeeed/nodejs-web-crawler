@@ -1,6 +1,8 @@
+const { link } = require("fs");
 const { url } = require("inspector");
 const { JSDOM } = require("jsdom");
 
+const visited = new Set();
 const crawlPage = async (baseURL, currentURL, pages) => {
   const baseURLObj = new URL(baseURL);
   const currentURLObj = new URL(currentURL);
@@ -9,13 +11,9 @@ const crawlPage = async (baseURL, currentURL, pages) => {
     return pages;
   }
 
-  const normalizeCurrentURL = normalizeURL(currentURL);
-  if (pages[normalizeCurrentURL] > 0) {
-    pages[normalizeCurrentURL]++;
+  if (visited.has(currentURL)) {
     return pages;
   }
-
-  pages[normalizeCurrentURL] = 1;
 
   console.log(`Activliy crawling ${currentURL}`);
 
@@ -25,6 +23,7 @@ const crawlPage = async (baseURL, currentURL, pages) => {
       console.log(
         `error fetching page on url ${currentURL} with code status ${resp.status}`
       );
+
       return pages;
     }
 
@@ -34,11 +33,16 @@ const crawlPage = async (baseURL, currentURL, pages) => {
       console.log(
         `non html response, content-type ${contentType} on page ${currentURL}`
       );
-      return pages;
     }
     const htmlBody = await resp.text();
 
     const nextURLs = getURLsFromHTML(htmlBody, baseURL);
+
+    visited.add(currentURL);
+    pages.push({
+      url: currentURL,
+      links: nextURLs,
+    });
 
     for (const nextURL of nextURLs) {
       pages = await crawlPage(baseURL, nextURL, pages);
