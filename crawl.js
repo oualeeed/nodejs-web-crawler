@@ -1,9 +1,10 @@
 const { link } = require("fs");
 const { url } = require("inspector");
 const { JSDOM } = require("jsdom");
+const { wordsMatch } = require("./utils");
 
 const visited = new Set();
-const crawlPage = async (baseURL, currentURL, pages) => {
+const crawlPage = async (baseURL, currentURL, pages, query) => {
   const baseURLObj = new URL(baseURL);
   const currentURLObj = new URL(currentURL);
 
@@ -28,7 +29,6 @@ const crawlPage = async (baseURL, currentURL, pages) => {
     }
 
     const contentType = resp.headers.get("content-type");
-
     if (!contentType.includes("text/html")) {
       console.log(
         `non html response, content-type ${contentType} on page ${currentURL}`
@@ -37,15 +37,16 @@ const crawlPage = async (baseURL, currentURL, pages) => {
     const htmlBody = await resp.text();
 
     const nextURLs = getURLsFromHTML(htmlBody, baseURL);
-
     visited.add(currentURL);
-    pages.push({
-      url: currentURL,
-      links: nextURLs,
-    });
+    if (wordsMatch(htmlBody, query) !== 0) {
+      pages.push({
+        url: currentURL,
+        links: nextURLs,
+      });
+    }
 
     for (const nextURL of nextURLs) {
-      pages = await crawlPage(baseURL, nextURL, pages);
+      pages = await crawlPage(baseURL, nextURL, pages, query);
     }
   } catch (error) {
     console.log(
@@ -73,8 +74,8 @@ const getURLsFromHTML = (htmlBody, baseURL) => {
     if (link.href.slice(0, 1) === "/") {
       // relative
       try {
-        const urlObj = new URL(`${baseURL}${link.href}`);
-        urls.push(`${baseURL}${link.href}`);
+        const urlObj = new URL(`${baseURL}${link.href.slice(1)}`);
+        urls.push(`${baseURL}${link.href.slice(1)}`);
       } catch (error) {
         console.log("error with relative url");
       }

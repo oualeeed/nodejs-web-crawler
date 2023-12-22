@@ -1,1 +1,0 @@
-const sortPages = (pages) => pages;
