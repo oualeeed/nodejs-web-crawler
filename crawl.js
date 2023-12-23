@@ -1,10 +1,13 @@
-const { link } = require("fs");
-const { url } = require("inspector");
-const { JSDOM } = require("jsdom");
-const { wordsMatch } = require("./utils");
+import { JSDOM } from "jsdom";
+import { wordsMatch } from "./utils.js";
 
-const visited = new Set();
-const crawlPage = async (baseURL, currentURL, pages, query) => {
+export const crawlPage = async (
+  baseURL,
+  currentURL,
+  pages,
+  query,
+  visited = new Set()
+) => {
   const baseURLObj = new URL(baseURL);
   const currentURLObj = new URL(currentURL);
 
@@ -46,7 +49,7 @@ const crawlPage = async (baseURL, currentURL, pages, query) => {
     }
 
     for (const nextURL of nextURLs) {
-      pages = await crawlPage(baseURL, nextURL, pages, query);
+      pages = await crawlPage(baseURL, nextURL, pages, query, visited);
     }
   } catch (error) {
     console.log(
@@ -57,7 +60,7 @@ const crawlPage = async (baseURL, currentURL, pages, query) => {
   return pages;
 };
 
-const normalizeURL = (urlString) => {
+export const normalizeURL = (urlString) => {
   const urlObj = new URL(urlString);
   const hostPath = `${urlObj.hostname}${urlObj.pathname}`;
   if (hostPath.length > 0 && hostPath.slice(-1) === "/") {
@@ -66,7 +69,7 @@ const normalizeURL = (urlString) => {
   return hostPath;
 };
 
-const getURLsFromHTML = (htmlBody, baseURL) => {
+export const getURLsFromHTML = (htmlBody, baseURL) => {
   const urls = [];
   const dom = new JSDOM(htmlBody);
   const linkElements = dom.window.document.querySelectorAll("a");
@@ -90,10 +93,4 @@ const getURLsFromHTML = (htmlBody, baseURL) => {
     }
   });
   return urls;
-};
-
-module.exports = {
-  normalizeURL,
-  getURLsFromHTML,
-  crawlPage,
 };

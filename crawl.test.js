@@ -1,6 +1,6 @@
-const { log } = require("console");
-const { normalizeURL, getURLsFromHTML } = require("./crawl.js");
-const { test, expect } = require("@jest/globals");
+import { log } from "console";
+import { normalizeURL, getURLsFromHTML } from "./crawl.js";
+import { test, expect } from "@jest/globals";
 
 test("normalizeURL strip protocol", () => {
   const input = "https://geeksandblogs.fly.dev/path";

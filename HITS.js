@@ -1,5 +1,5 @@
 // HITS Algorithm
-function hitsAlgorithm(adjacencyMatrix, maxIterations) {
+export function hitsAlgorithm(adjacencyMatrix, maxIterations) {
   const hubScores = new Map();
   const authorityScores = new Map();
 
@@ -17,7 +17,12 @@ function hitsAlgorithm(adjacencyMatrix, maxIterations) {
 
       entry.links.forEach((link) => {
         hubScore += authorityScores.get(link) ?? 0;
-        authorityScore += hubScores.get(link) ?? 0;
+      });
+
+      adjacencyMatrix.forEach((e) => {
+        if (e.links.includes(entry.url)) {
+          authorityScore += hubScores.get(e.url) ?? 0;
+        }
       });
 
       hubScores.set(entry.url, hubScore);
@@ -35,7 +40,7 @@ function hitsAlgorithm(adjacencyMatrix, maxIterations) {
 }
 
 // Normalize scores
-function normalizeScores(scores) {
+export function normalizeScores(scores) {
   const sum = Array.from(scores.values()).reduce(
     (acc, score) => acc + score,
     0
@@ -46,8 +51,3 @@ function normalizeScores(scores) {
     scores.set(key, value * factor);
   });
 }
-
-module.exports = {
-  normalizeScores,
-  hitsAlgorithm,
-};
