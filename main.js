@@ -6,37 +6,47 @@ import inquirer from "inquirer";
 import promptSync from "prompt-sync";
 import { hitsAlgorithm } from "./HITS.js";
 import { crawlPage } from "./crawl.js";
-// if (process.argv.length < 3) {
-//   console.log("No Website provided");
-//   process.exit(1);
-// }
-
-// if (process.argv.length > 3) {
-//   console.log("Too many arguments");
-//   process.exit(1);
-// }
 
 const prompt = promptSync();
 const sleep = (ms = 4000) => new Promise((r) => setTimeout(r, ms));
 
 async function welcome() {
-  const rainbowTitle = chalkAnimation.rainbow(`
-  m    m               mmmmm    mm    mmmm    m
-  #    #   "             #      ##   m"  "m   #
-  #mmmm#   #             #     #  #  #    #   #
-  #    #   #             #     #mm#  #    #
-  #    #   #           mm#mm  #    #  #mm#    0
-  
-  Welcome to your favorite search engine !`);
+  const rainbowTitle = chalkAnimation.rainbow(
+    `
+                                                                                                           
+                                                                                                       
+HHHHHHHHH     HHHHHHHHH  iiii            IIIIIIIIII               AAA                    OOOOOOOOO     
+H:::::::H     H:::::::H i::::i           I::::::::I              A:::A                 OO:::::::::OO   
+H:::::::H     H:::::::H  iiii            I::::::::I             A:::::A              OO:::::::::::::OO 
+HH::::::H     H::::::HH                  II::::::II            A:::::::A            O:::::::OOO:::::::O
+  H:::::H     H:::::H  iiiiiii             I::::I             A:::::::::A           O::::::O   O::::::O
+  H:::::H     H:::::H  i:::::i             I::::I            A:::::A:::::A          O:::::O     O:::::O
+  H::::::HHHHH::::::H   i::::i             I::::I           A:::::A A:::::A         O:::::O     O:::::O
+  H:::::::::::::::::H   i::::i             I::::I          A:::::A   A:::::A        O:::::O     O:::::O
+  H:::::::::::::::::H   i::::i             I::::I         A:::::A     A:::::A       O:::::O     O:::::O
+  H::::::HHHHH::::::H   i::::i             I::::I        A:::::AAAAAAAAA:::::A      O:::::O     O:::::O
+  H:::::H     H:::::H   i::::i             I::::I       A:::::::::::::::::::::A     O:::::O     O:::::O
+  H:::::H     H:::::H   i::::i             I::::I      A:::::AAAAAAAAAAAAA:::::A    O::::::O   O::::::O
+HH::::::H     H::::::HHi::::::i          II::::::II   A:::::A             A:::::A   O:::::::OOO:::::::O
+H:::::::H     H:::::::Hi::::::i          I::::::::I  A:::::A               A:::::A   OO:::::::::::::OO 
+H:::::::H     H:::::::Hi::::::i          I::::::::I A:::::A                 A:::::A    OO:::::::::OO   
+HHHHHHHHH     HHHHHHHHHiiiiiiii          IIIIIIIIIIAAAAAAA                   AAAAAAA     OOOOOOOOO     
+                                                                                                       
+                                                                                                       
+    `
+  );
 
   await sleep();
   rainbowTitle.stop();
 
   console.log(`
     ${chalk.bgBlue("HOW TO USE THE IAO-SEARCH-ENGINE")}
-    Type the URL of the website you want the search to ru on
-    Type your search query
-    I'll give the to hubs and authorities and ${chalk.bgRed("kill")} myself.
+    ${chalk.yellow(1)}. Type the URL of the website you want the search to ru on
+    ${chalk.yellow(
+      2
+    )}. choose the search mode : The algorithm you want to do your search.
+    ${chalk.yellow(3)}. Type your search query
+    ${chalk.yellow(4)}. I give you your the top results.
   `);
 }
 
@@ -102,7 +112,7 @@ const promptOtherQuery = async () => {
   const answer = await inquirer.prompt({
     name: "continue",
     type: "list",
-    message: "Choose the search mode : ",
+    message: "Another query ? : ",
     choices: ["Another Search Query", "Kill the program"],
   });
 
@@ -158,7 +168,7 @@ await welcome();
 await promptURL();
 await promptTheSearchMode();
 console.log("These are your choices ");
-console.log("The search engine will run on ", chalk.yellow(baseURL));
+console.log(`The search engine will run on ${chalk.yellow(baseURL)}`);
 console.log(`The IAO-Search engine uses the ${chalk.yellow(searchMode)}`);
 
 while (true) {
@@ -170,26 +180,3 @@ while (true) {
     break;
   }
 }
-
-// crawlPage(baseURL, baseURL, [], query).then((pages) => {
-//   const { hubScores, authorityScores } = hitsAlgorithm(pages, 50);
-
-//   const hubRanking = Array.from(hubScores.entries()).sort(
-//     (a, b) => b[1] - a[1]
-//   );
-//   const authorityRanking = Array.from(authorityScores.entries()).sort(
-//     (a, b) => b[1] - a[1]
-//   );
-
-//   console.log("Hub Ranking:", hubRanking);
-//   console.log("Authority Ranking:", authorityRanking);
-//   console.log("Top 5 authorities are : ");
-//   for (let i = 1; i <= 5; i++) {
-//     console.log(
-//       i,
-//       authorityRanking[i][0],
-//       "with authority score of",
-//       authorityRanking[i][1]
-//     );
-//   }
-// });
